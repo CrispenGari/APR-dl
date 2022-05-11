@@ -1,7 +1,7 @@
 
 from ariadne import QueryType
 from utils import Meta
-
+from model import apr_model, apr_predictor
 
 query = QueryType()
 
@@ -18,16 +18,21 @@ def meta_resolver(obj, info):
    
 @query.field('predictor')
 def predictor_resolver(obj, info, input):
-   return {"predictions":{
-      "recommend": {
-        "label": 1,
-        "probability": .9,
-        "class_": "RECOMMENDED",
-        "emoji": "👍"
-      },
-      "rating":{
-          "rating": 5,
-          "stars": "⭐" * 5,
-          "probability": .98
+   try:
+      preds = apr_predictor(
+         input.get('text_review'), 
+         input.get("text_review_upvote"),
+         model=apr_model
+      )
+      return {
+         "predictions":preds,
+         "ok": True, 
       }
-   }, "ok": True, }
+   except Exception as e:
+      return {
+         "ok": False,
+         "error": {
+            "field":"predictor",
+            "message": str(e)
+         }
+      }

@@ -51,7 +51,7 @@ virtualenv venv
 
 Then you need to activate the virtual environment by running the following command:
 
-```
+```shell
 .\venv\Scripts\activate.bat
 ```
 
@@ -128,7 +128,7 @@ With the following graphql variables:
 ```json
 {
   "input": {
-    "text_review": "I love this product so much.",
+    "text_review": "Just piping in here ordered my usual size of small petite the slip that came with the dress is about a size negative zero it could hardly squeeze over my body and the dress itself is a bright pale aqua and it is a shift and because of the smocking it very strangely i think it very cheap and is ill fitting i would say if you are a person on which shift look awesome you might like this but mind the size of the slip in the range and also it is aqua",
     "text_review_upvote": 19
   }
 }
@@ -144,15 +144,15 @@ You will get the similar response as follows:
       "ok": true,
       "predictions": {
         "rating": {
-          "probability": 0.98,
-          "rating": 5,
-          "stars": "⭐⭐⭐⭐⭐"
+          "probability": 0.4749999940395355,
+          "rating": 3,
+          "stars": "⭐⭐⭐"
         },
         "recommend": {
-          "class_": "RECOMMENDED",
-          "emoji": "👍",
-          "label": 1,
-          "probability": 0.9
+          "class_": "NOT RECOMMENDED",
+          "emoji": "👎",
+          "label": 0,
+          "probability": 0.769
         }
       }
     }
