@@ -1,0 +1,56 @@
+# Schema Type
+schema {
+  query: Query
+}
+
+# Object Types
+type Meta {
+  programmer: String!
+  main: String!
+  description: String!
+  language: String!
+  libraries: [String!]!
+}
+
+# Error Object Type
+type Error {
+  field: String!
+  message: String!
+}
+# Recommendation Object Type
+type Recommend {
+  label: Int!
+  class_: String!
+  probability: Float!
+  emoji: String!
+}
+# Ratings object Type
+type Rating {
+  rating: Int!
+  probability: Float!
+  stars: String!
+}
+# Prediction Object Type
+type Predictions {
+  recommend: Recommend!
+  rating: Rating!
+}
+# Prediction Response Object Type
+type PredictorResponse {
+  error: Error
+  ok: Boolean!
+  predictions: Predictions
+}
+# Input Types
+
+# Product Recommender Input
+input APRInput {
+  text_review: String!
+  text_review_upvote: Int!
+}
+# Query Type
+
+type Query {
+  meta: Meta!
+  predictor(input: APRInput!): PredictorResponse!
+}
