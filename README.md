@@ -3,6 +3,7 @@
 ⭐⭐⭐⭐⭐ Automatic Product Recommender **(APR)** is an Artificial Intelligence API for recommending products based on customer reviews. 👍👎
 
 <img src="/images/cover.png" width="100%" alt="cover"/>
+
 ### Abstract
 
 Automatic Product Recommender **(APR)** is a very useful topic in modern technologies. In this repository I present an **APR** graphql API served locally for recommending products based on other customer's reviews. APR is very useful in modern technology because it helps product consumers to chose weather they should buy the product or not based on previous experience customer reviews.
@@ -24,6 +25,44 @@ C:.
 └───utils
     └───__pycache__
 ```
+
+### Data.
+
+The dataset that was used in this project was obtained from public datasets from [Kaggle.com](https://www.kaggle.com/) and the dataset name was [womens-ecommerce-clothing-reviews](https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews). The dataset contains a csv file that has a lot of columns. We cleaned the data in [this notebook](/notebooks//00_E_Commerce_Clothing_Reviews_Data_Prep.ipynb), by cleaning the text and do features and labels extraction.
+
+Initially the dataset was having `23, 486` paired rows of features to their respective labels but after removing NA values in the dataset we had the following rows of paired features with their respective labels.
+
+| #                           | # of Rows |
+| --------------------------- | --------- |
+| Before removing `NA` values | `23, 486` |
+| After removing `NA` values  | `22, 641` |
+
+Initially we had `10` column names and after the dataset has been cleaned we were left with `4` columns which contains 2 feature columns and 2 labels columns. These columns are:
+
+| Column Name   | Description                                                                                     | Category  |
+| ------------- | ----------------------------------------------------------------------------------------------- | --------- |
+| `text`        | The review text by a customer.                                                                  | `feature` |
+| `upvotes`     | Number of customers who positively vote for the review as positive.                             | `feature` |
+| `rating`      | Product score granted by the customer from 1 Worst, to 5 Best.                                  | `label`   |
+| `recommended` | stating where the customer recommends the product where 1 is recommended, 0 is not recommended. | `label`   |
+
+During the process of data cleaning the review text was cleaned by removing:
+
+1. punctuations and extra white spaces
+2. links and html tags
+3. numbers
+4. word's were de-contracted, meaning words like `I'm` was converted to `I am`.
+
+### Data Analysis
+
+In this section we are going to do graphical representation of our data. We are going to start by having a look at the distribution of features and labels. The data analysis was done in the second notebook [`01_Automatic_Product_Recommender_(APR).ipynb`](</notebooks/01_Automatic_Product_Recommender_(APR).ipynb>) before a deep learning model was created.
+
+1. upvotes
+2. rating
+3. recommended
+4. text
+
+### Model Metrics
 
 ### Getting started
 
