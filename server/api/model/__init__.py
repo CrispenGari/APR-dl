@@ -1,7 +1,7 @@
 
 import os
 import nltk
-nltk.download("punkt")
+
 
 import numpy as np
 import tensorflow as tf
@@ -11,21 +11,21 @@ from tensorflow import keras
 from sklearn.preprocessing import MinMaxScaler
 from nltk.tokenize import word_tokenize
 
+nltk.download("punkt")
 
-
-with open(os.path.join(os.getcwd(), f"model/static/vocab.json"), 'r') as ref:
+with open(os.path.join(os.getcwd(), "model/static/vocab.json"), 'r') as ref:
     VOCAB = json.load(ref)
     
 print(" ✅ LOADING 'upvotes arrays' MODEL!\n") 
-train_up_votes = np.load(os.path.join(os.getcwd(), f"model/static/upvotes.npy"))
+train_up_votes = np.load(os.path.join(os.getcwd(), "model/static/upvotes.npy"))
 print(" ✅ LOADING 'upvotes arrays' MODEL DONE!\n")
     
 # variables
 max_words = 100
-vocab_size = 7799
+vocab_size = 9173
 scaler = MinMaxScaler()
 scaler.fit(train_up_votes)
-MODEL_PATH_NAME = os.path.join(os.getcwd(), f"model/static/apr-model.h5")
+MODEL_PATH_NAME = os.path.join(os.getcwd(), "model/static/apr-model.h5")
 
 def text_to_sequence(sent):
     words = word_tokenize(sent.lower())
@@ -33,8 +33,8 @@ def text_to_sequence(sent):
     for word in words:
         try:
             sequences.append(VOCAB[word])
-        except:
-         sequences.append(0)
+        except Exception:
+            sequences.append(0)
     return sequences
 
 class APR(keras.Model):

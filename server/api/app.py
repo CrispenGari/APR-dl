@@ -1,11 +1,10 @@
 import os
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 from flask import request, jsonify, make_response
 from app import app
 from ariadne import  load_schema_from_path, make_executable_schema, graphql_sync
-from ariadne.constants import PLAYGROUND_HTML
-
 from resolvers.queries import query
+
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 type_defs = load_schema_from_path("schema.graphql")
 schema = make_executable_schema(
@@ -14,7 +13,6 @@ schema = make_executable_schema(
 class Config:
     DEBUG = True
     PORT = 3001
-
 
 @app.route('/', methods=["GET"])
 def meta():
@@ -28,9 +26,9 @@ def meta():
     }
     return make_response(jsonify(meta)), 200
 
-@app.route("/graphql", methods=["GET"], )
-def graphql_playground():
-    return PLAYGROUND_HTML, 200
+# @app.route("/graphql", methods=["GET"], )
+# def graphql_playground():
+#     return PLAYGROUND_HTML, 200
 
 @app.route("/graphql", methods=["POST"])
 def graphql_server():
