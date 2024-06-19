@@ -57,16 +57,185 @@ During the process of data cleaning the review text was cleaned by removing:
 
 In this section we are going to do graphical representation of our data. We are going to start by having a look at the distribution of features and labels. The data analysis was done in the second notebook [`01_Automatic_Product_Recommender_(APR).ipynb`](</notebooks/01_Automatic_Product_Recommender_(APR).ipynb>) before a deep learning model was created.
 
-1. upvotes
-2. rating
-3. recommended
-4. text
+1. `upvotes`
 
-### Model Metrics
+After the data cleaning. Here is the how the upvotes were distributed with the maximum up votes on the review to be `122` and the minimum number of votes to be `0`.
 
-### Getting started
+<p align="center">
+  <img src="./images/upvotes_distribution_0.png" alt="apr" width="400">
+</p>
 
-In this section we are going to show how you can use the APR server to make predictions locally.
+The dataset was trimmed by balancing the dataset based on the `recommended` label. And the final distribution of the upvotes was as follows having the maximum number of votes on a review to be `177` and the minimum remain `0` meaning in the dataset the review that has minimum votes has `0`.
+
+<p align="center">
+  <img src="./images/upvotes_distribution-1.png" alt="apr" width="400">
+</p>
+
+2. `rating`
+
+Before the data was balanced with the review label. Here is how the ratings on the reviews were distributed. Most of the products that was reviewed was `5` star rated having a fraction of above `50%`. The product that wasn't having a good ratting received have a fraction of `3.6%`
+
+<p align="center">
+  <img src="./images/rating_distribution_0.png" alt="apr" width="400">
+</p>
+
+After the dataset was balanced based on the `recommended` label this is how the ratings were distributed in the entire dataset.
+
+<p align="center">
+  <img src="./images/rating_distribution_1.png" alt="apr" width="400">
+</p>
+
+3. `recommended`
+
+We had more products that were recommended before we balanced the dataset based on this column and this is how the recommended label was distributed in the entire dataset.
+
+<p align="center">
+  <img src="./images/recomment_distribution_0.png" alt="apr" width="400">
+</p>
+
+The balanced dataset had `4, 101` examples or reviews that were recommending the product and `4, 101` reviews that were not recommending the product.
+
+<p align="center">
+  <img src="./images/recomment_distribution_1.png" alt="apr" width="400">
+</p>
+
+4. `text`
+
+We wanted to check what words were appearing the most in the dataset. Before we balanced our dataset the words that were appearing the most were:
+
+- dress
+- love
+- top
+- fit
+- look
+
+Just to mention a few and this distribution was visualized using a `word cloud`
+
+<p align="center">
+  <img src="./images/wc_0.png" alt="apr" width="400">
+</p>
+
+After the dataset was balanced based on the `recommend` column the word cloud visualization was as follows:
+
+<p align="center">
+  <img src="./images/wc_1.png" alt="apr" width="400">
+</p>
+The most appearing words were:
+
+- dress
+- top
+- look
+- fit
+- love
+
+We concluded that the reviews were based on the women clothes, because of the words that were detected in the dataset from the text review columns.
+
+After the dataset was balanced, The dataset was spited into `3` sets preparing for the creation of a deep learning model. These sets were:
+
+1. `training` - The set that will be used to train the model.
+2. `validation` - The set that will be used to validate the model during training and updating of model metrics during model training.
+3. `testing` - The set that we will use to evaluate the model after we have trained it.
+
+The total number of examples that we obtained after we split our dataset was as follows:
+
+| SET              | EXAMPLES |
+| ---------------- | -------- |
+| **`training`**   | `5, 741` |
+| **`testing`**    | `1, 230` |
+| **`validation`** | `1, 231` |
+
+### Model Metrics/Results
+
+We created a model using `Keras Sub Classing` API for flexibility our model takes in `2` features and predict `2` labels, weather the product can be `recommended` or not which is a `binary classification` and it also classify or predict the `rating` that a product can get from a user based on the the review text and it's `upvote` count which was a multi-class classification task. The model was observed to have the following parameters
+
+| #                              | PARAMETERS     |
+| ------------------------------ | -------------- |
+| **`Total Parameters`**         | `4, 571, 130 ` |
+| **`Trainable Parameters`**     | `4, 571, 130`  |
+| **`Non-trainable Parameters`** | `0`            |
+
+> The model had about `4.5` total trainable parameters.
+
+After the model was trained the training and validation metrics were stored in a history object so that they can be visualized.
+
+The model overall `losses` for the `train` and `validation` during model training on each train epoch were as follows:
+
+<p align="center">
+  <img src="./images/loss.png" alt="apr" width="400">
+</p>
+
+The model individual `losses` for the `train` set that were observed during model training for the `recommended` and `ratting` labels on each train epoch were as follows:
+
+<p align="center">
+  <img src="./images/train_recommended_ratting_loss.png" alt="apr" width="400">
+</p>
+
+The model individual `losses` for the `validation` set that were observed during model training for the `recommended` and `ratting` labels on each train epoch were as follows:
+
+<p align="center">
+  <img src="./images/val_losses.png" alt="apr" width="400">
+</p>
+
+The train and validation accuracies were observed for the recommendation label per each and every epoch and were as follows:
+
+<p align="center">
+  <img src="./images/recommended_accuracies.png" alt="apr" width="400">
+</p>
+
+> The accuracies kept on increasing till they stopped increasing that's where we stopped training the model using a technique called `Early Stopping`. We were not interested in the `accuracies` of the `rating` label as it is not a good measure in this case because the labels were not balanced.
+
+The model was the evaluated based on the dataset that it have never seen during training and the following metrics were observed.
+
+| METRIC                     | VALUE  |
+| -------------------------- | ------ |
+| **`total loss`**           | `1.56` |
+| **`rating loss`**          | `1.17` |
+| **`recommended loss`**     | `0.39` |
+| **`rating accuracy`**      | `0.51` |
+| **`recommended accuracy`** | `0.86` |
+
+The loss of the ratting label was higher than the one for the recommended label. This might be because the rating label was not balanced and had few examples on other labels. The overall loss of the `APR` model was quite reasonable and it can be improved in future works with a good dataset. The `rating accuracy` was just above average by `1%` this is because we had mis balanced labels on the `rating` labels, so we can't use this as a good measure on how good is our model performing. The model was having a reasonable accuracy of `~87%` which can also be improved with future works.
+
+We went ahead to create make predictions based on the test dataset and the following confusion matrix were plotted.
+
+<p align="center">
+  <img src="./images/recommended_cm.png" alt="apr" width="400">
+</p>
+
+The above is the confusion matrix for the recommended label. And the model was really doing well.
+
+<p align="center">
+  <img src="./images/rating_cm.png" alt="apr" width="400">
+</p>
+
+The model poorly performs on the rating labels due to the reasons that we mentioned which we can focus on on the future works. The classification report were as follows:
+
+|                    | precision | recall | f1-score | support |
+| ------------------ | --------- | ------ | -------- | ------- |
+| **`0`**            | `0.88`    | `0.84` | `0.86`   | `619`   |
+| **`1`**            | `0.85`    | `0.89` | `0.87`   | `611`   |
+|                    |           |        |          | `-`     |
+| **`accuracy`**     |           |        | `0.87`   | `1 230` |
+| **`macro avg`**    | `0.86`    | `0.86` | `0.86`   | `1 230` |
+| **`weighted avg`** | `0.87`    | `0.86` | `0.86`   | `1 230` |
+
+The above is the classification report of the `recommended` label which was obtained after evaluating the model using the test data.
+
+|                    | precision | recall | f1-score | support |
+| ------------------ | --------- | ------ | -------- | ------- |
+| **`0`**            | `0.00`    | `0.00` | `0.00`   | `177`   |
+| **`1`**            | `0.38`    | `0.37` | `0.38`   | `236`   |
+| **`2`**            | `0.37`    | `0.51` | `0.43`   | `282`   |
+| **`3`**            | `0.30`    | `0.07` | `0.11`   | `191`   |
+| **`4`**            | `0.60`    | `0.94` | `0.78`   | `404`   |
+|                    |           |        |          | `-`     |
+| **`accuracy`**     |           |        | `0.51`   | `1 230` |
+| **`macro avg`**    | `0.35`    | `0.38` | `0.34`   | `1 230` |
+| **`weighted avg`** | `0.43`    | `0.51` | `0.45`   | `1 230` |
+
+### Model Inference
+
+In this section we are going to show how you can use the `APR` server to make predictions locally.
 
 First you are required to have `python` installed on your computer to be more specific `python` version 3 and `git`
 
