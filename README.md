@@ -2,7 +2,23 @@
 
 ⭐⭐⭐⭐⭐ Automatic Product Recommender **(APR)** is an Artificial Intelligence API for recommending products based on customer reviews. 👍👎
 
-<img src="/images/cover.png" width="100%" alt="cover"/>
+<img src="./images/cover.png" width="100%" alt="cover"/>
+
+### Table of Contents
+
+- [Automatic Product Recommender](#automatic-product-recommender)
+- [Table of Contents](#table-of-contents)
+- [Abstract](#abstract)
+- [Folder structure](#folder-structure)
+- [Data.](#data)
+- [Data Analysis](#data-analysis)
+- [Model Metrics/Results](#model-metricsresults)
+- [Model Inference](#model-inference)
+- [GraphQL](#graphql)
+- [Example Prediction](#example-prediction)
+- [Model](#model)
+- [Top Techs used](#top-techs-used)
+- [Notebooks](#notebooks)
 
 ### Abstract
 
@@ -464,6 +480,14 @@ recommended:
 rattings: ⭐⭐⭐⭐⭐
     Positive Ordinal Integer variable for the product score granted by the customer from 1 Worst, to 5 Best.
 ```
+
+### Top Techs used
+
+1. `TensorFlow + Keras` - For building a Deep learning model.
+2. `Google Colab` - As a workspace to train a model, by utilizing free GPU accelerations.
+3. `Python` - As a programming language.
+4. `Ariadne` - GraphQL package for python.
+5. `Flask` - To create a web server integrated with graphQL.
 
 ### Notebooks
 

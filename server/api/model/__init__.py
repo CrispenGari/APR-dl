@@ -1,8 +1,6 @@
 
 import os
 import nltk
-
-
 import numpy as np
 import tensorflow as tf
 import json
@@ -16,13 +14,18 @@ nltk.download("punkt")
 with open(os.path.join(os.getcwd(), "model/static/vocab.json"), 'r') as ref:
     VOCAB = json.load(ref)
     
-print(" ✅ LOADING 'upvotes arrays' MODEL!\n") 
+
+print(" ✅ LOADING 'upvotes arrays'!\n") 
 train_up_votes = np.load(os.path.join(os.getcwd(), "model/static/upvotes.npy"))
-print(" ✅ LOADING 'upvotes arrays' MODEL DONE!\n")
+print(" ✅ LOADING 'upvotes arrays' DONE!\n")
+
+print(" ✅ LOADING 'embedding weights'!\n") 
+embedding_matrix = np.load(os.path.join(os.getcwd(), "model/static/embedding_weights.npy"))
+print(" ✅ LOADING 'embeddings weights' DONE!\n")
     
 # variables
 max_words = 100
-vocab_size = 9173
+vocab_size = embedding_matrix.shape[0]
 scaler = MinMaxScaler()
 scaler.fit(train_up_votes)
 MODEL_PATH_NAME = os.path.join(os.getcwd(), "model/static/apr-model.h5")
@@ -37,84 +40,86 @@ def text_to_sequence(sent):
             sequences.append(0)
     return sequences
 
+
+
 class APR(keras.Model):
-    def __init__(self):
-        super(APR, self).__init__()
-        # layers for bidirectional
-        forward_layer = keras.layers.GRU(
-        128, return_sequences=True, dropout=.5,
-        name="gru_forward_layer"
-        )
-        backward_layer = keras.layers.LSTM(
-        128, return_sequences=True, dropout=.5,
-        go_backwards=True, name="lstm_backward_layer"
-        )
-        self.embedding = keras.layers.Embedding(
-            vocab_size, 100, 
-            input_length=max_words,
-            # weights=[embedding_matrix], 
-            trainable=True,
-            name = "embedding_layer"
-        )
-        self.bidirectional = keras.layers.Bidirectional(
-            forward_layer,
-            backward_layer = backward_layer,
-            name= "bidirectional_layer"
-        )
-        self.gru_layer = keras.layers.GRU(
-                512, return_sequences=True,
-                dropout=.5,
-                name= "gru_layer"
-        )
-        self.lstm_layer = keras.layers.LSTM(
-                512, return_sequences=True,
-                dropout=.5,
-                name="lstm_layer"
-        )
-        self.fc_1 = keras.layers.Dense(512, activation="relu", name="upvote_fc1")
-        self.pooling_layer = keras.layers.GlobalAveragePooling1D(
-            name="average_pooling_layer"
-        )
-        self.concatenate_layer = keras.layers.Concatenate(name="concatenate_layer_layer")
+  def __init__(self):
+    super(APR, self).__init__()
+    # layers for bidirectional
+    forward_layer = keras.layers.GRU(
+      128, return_sequences=True, dropout=.5,
+      name="gru_forward_layer"
+    )
+    backward_layer = keras.layers.LSTM(
+      128, return_sequences=True, dropout=.5,
+      go_backwards=True, name="lstm_backward_layer"
+    )
+    self.embedding = keras.layers.Embedding(
+          vocab_size, 100,
+          weights=[embedding_matrix],
+          trainable=True,
+          name = "embedding_layer"
+    )
+    self.bidirectional = keras.layers.Bidirectional(
+        forward_layer,
+        backward_layer = backward_layer,
 
-        self.dense_1 = keras.layers.Dense(64, activation='relu', name="dense_1")
-        self.dropout_1 = keras.layers.Dropout(rate= .5, name="dropout_layer_0")
-        self.dense_2 = keras.layers.Dense(512, activation='relu', name="dense_2")
-        self.dropout_2 =  keras.layers.Dropout(rate= .5, name="dropout_layer_1")
-        self.dense_3 = keras.layers.Dense(128, activation='relu', name="dense_3")
-        self.dropout_3 = keras.layers.Dropout(rate= .5, name="dropout_layer_2")
-        self.rating_output = keras.layers.Dense(5, activation='softmax', name="rating_output")
-        self.recommend_output = keras.layers.Dense(1, activation='sigmoid', name="recommend_output")
-            
-    def call(self, inputs):
-        text, upvote = inputs
-        # Leaning the text features
-        x_1 = self.embedding(text)
-        x_1 = self.bidirectional(x_1)
-        x_1 = self.gru_layer(x_1)
-        x_1 = self.lstm_layer(x_1)
-        x_1 = self.pooling_layer(x_1)
+        name= "bidirectional_layer"
+    )
+    self.gru_layer = keras.layers.GRU(
+              512, return_sequences=True,
+              dropout=.5,
+              name= "gru_layer"
+      )
+    self.lstm_layer = keras.layers.LSTM(
+              512, return_sequences=True,
+              dropout=.5,
+              name="lstm_layer"
+    )
+    self.fc_1 = keras.layers.Dense(512, activation="relu", name="upvote_fc1")
+    self.pooling_layer = keras.layers.GlobalAveragePooling1D(
+          name="average_pooling_layer"
+    )
+    self.concatenate_layer = keras.layers.Concatenate(name="concatenate_layer_layer")
 
-        # Learning the upvotes
-        x_2 = self.fc_1(upvote)
+    self.dense_1 = keras.layers.Dense(64, activation='relu', name="dense_1")
+    self.dropout_1 = keras.layers.Dropout(rate= .5, name="dropout_layer_0")
+    self.dense_2 = keras.layers.Dense(512, activation='relu', name="dense_2")
+    self.dropout_2 =  keras.layers.Dropout(rate= .5, name="dropout_layer_1")
+    self.dense_3 = keras.layers.Dense(128, activation='relu', name="dense_3")
+    self.dropout_3 = keras.layers.Dropout(rate= .5, name="dropout_layer_2")
+    self.rating_output = keras.layers.Dense(5, activation='softmax', name="rating_output")
+    self.recommend_output = keras.layers.Dense(1, activation='sigmoid', name="recommend_output")
 
-        # concatenation
-        x = self.concatenate_layer([x_1, x_2])
+  def call(self, inputs):
+    text, upvote = inputs
+    # Leaning the text features
+    x_1 = self.embedding(text)
+    x_1 = self.bidirectional(x_1)
+    x_1 = self.gru_layer(x_1)
+    x_1 = self.lstm_layer(x_1)
+    x_1 = self.pooling_layer(x_1)
 
-        # leaning combinned features
-        x = self.dense_1(self.dropout_1(x))
-        x = self.dense_2(self.dropout_2(x))
-        x = self.dense_3(self.dropout_3(x))
+    # Learning the upvotes
+    x_2 = self.fc_1(upvote)
 
-        # outputs
-        rating = self.rating_output(x)
-        recommend = self.recommend_output(x)
-        return rating, recommend
+    # concatenation
+    x = self.concatenate_layer([x_1, x_2])
+
+    # leaning combinned features
+    x = self.dense_1(self.dropout_1(x))
+    x = self.dense_2(self.dropout_2(x))
+    x = self.dense_3(self.dropout_3(x))
+
+    # outputs
+    rating = self.rating_output(x)
+    recommend = self.recommend_output(x)
+    return rating, recommend
     
 print(" ✅ LOADING TENSORFLOW APR MODEL!\n") 
 apr_model = APR()
 apr_model.build([(None, 100), (None, 1)])
-apr_model.load_weights(MODEL_PATH_NAME)
+apr_model.load_weights(MODEL_PATH_NAME, by_name=True)
 print(" ✅ LOADING TENSORFLOW APR MODEL DONE!\n")
 
 def apr_predictor(text_review: str, text_review_upvote:int, model):
