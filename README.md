@@ -388,6 +388,10 @@ You will get the similar response as follows:
 
 The model that is being used here was build using tensorflow and keras `Subclassing` API and the architecture looks as follows:
 
+<p align="center"><img src="./images/model-achitecture.png" alt="model"/></p>
+
+The implementation of the model in python code was as follows.
+
 ```py
 class APR(keras.Model):
   def __init__(self):
